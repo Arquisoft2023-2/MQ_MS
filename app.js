@@ -10,7 +10,7 @@ const databaseQuery = require('./src/services/databaseQuery');
 //wait until connection is established
 connectToMongo();
 //cron databaseQuery every 30 seconds
-cron.schedule('*/10 * * * * *', () => {
+cron.schedule('*/5 * * * * *', () => {
   databaseQuery();
 });
 
