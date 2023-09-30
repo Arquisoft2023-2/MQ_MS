@@ -4,7 +4,9 @@ require("../models/Flight");
 const Flight = mongoose.model('Flight');
 
 // Define your database query function
-
+function toRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
 // Función para calcular la distancia en kilómetros entre dos puntos geográficos utilizando la fórmula del haversine.
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371; // Radio de la Tierra en kilómetros
@@ -33,10 +35,12 @@ function areFlightsClose(flight1, flight2, maxDistanceKm, maxAltitudeDifference)
 
 async function executeDatabaseQuery() {
   try {
+    const halfHourAgo = new Date(Date.now() - 30 * 60 * 1000); // Calcula la fecha y hora hace 30 minutos
+
     const result = await Flight.find({
-      // Buscar todos los vuelos creados en los últimos 20 segundos
+      // Buscar todos los vuelos creados en la última media hora
       createdAt: {
-        $gte: new Date(Date.now() - 20000)
+        $gte: halfHourAgo
       }
     });
 
@@ -45,7 +49,7 @@ async function executeDatabaseQuery() {
       for (let j = i + 1; j < result.length; j++) {
         const flight1 = result[i];
         const flight2 = result[j];
-        const maxDistanceKm = 100; // Distancia máxima en kilómetros
+        const maxDistanceKm = 33; // Distancia máxima en kilómetros
         const maxAltitudeDifference = 1000; // Diferencia máxima de altitud en pies
 
         if (areFlightsClose(flight1, flight2, maxDistanceKm, maxAltitudeDifference)) {
