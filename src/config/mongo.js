@@ -10,8 +10,10 @@ async function dbConnect() {
             useUnifiedTopology: true,
         });
         console.log("Db connected!");
+        return true;
     } catch (error) {
         console.error("Error connecting to MongoDB:", error);
+        return false;
     }
 }
 
