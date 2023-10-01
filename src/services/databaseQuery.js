@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 // Define your database model and schema
 require("../models/Flight");
 const Flight = mongoose.model('Flight');
-const {sendMessageToRabbitMQ} = require('../config/utils/producer'); 
+const { sendMessageToRabbitMQ } = require('../config/utils/producer'); 
+
+
+
 
 // Define your database query function
 function toRadians(degrees) {
@@ -47,6 +50,7 @@ async function executeDatabaseQuery() {
 
     // Comparar vuelos para ver si están cerca
     for (let i = 0; i < result.length; i++) {
+
       if (result[i].Fuel_percentage < 30) {
         const message = JSON.stringify({
           flight: result[i].FK_Plate,
@@ -54,7 +58,9 @@ async function executeDatabaseQuery() {
         });
         sendMessageToRabbitMQ(message);
       }
+
       for (let j = i + 1; j < result.length; j++) {
+        
         const flight1 = result[i];
         const flight2 = result[j];
         const maxDistanceKm = 33; // Distancia máxima en kilómetros
@@ -67,10 +73,12 @@ async function executeDatabaseQuery() {
             flight: flight1.FK_Plate,
             message: "flight close to plane with plate " + flight2.FK_Plate
           });
+
           const message2 = JSON.stringify({
             flight: flight2.FK_Plate,
             message: "flight close to plane with plate " + flight1.FK_Plate
           });
+
           sendMessageToRabbitMQ(message1);
           sendMessageToRabbitMQ(message2);
 

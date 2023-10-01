@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const connectToMongo = require('./src/config/mongo');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3005;
 const cron = require('node-cron');
 const databaseQuery = require('./src/services/databaseQuery');
 //run databaseQuery
@@ -10,7 +10,9 @@ const databaseQuery = require('./src/services/databaseQuery');
 //wait until connection is established
 connectToMongo();
 //cron databaseQuery every 30 seconds
-cron.schedule('*/5 * * * * *', () => {
+
+
+cron.schedule('*/30 * * * * *', () => {
   databaseQuery();
 });
 

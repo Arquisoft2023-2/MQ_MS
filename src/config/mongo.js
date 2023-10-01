@@ -1,9 +1,8 @@
 const mongoose = require("mongoose");
-require("dotenv").config(); // Carga las variables de entorno desde .env
+require('dotenv').config(); // Carga las variables de entorno desde .env
 
 async function dbConnect() {
-    const MONGO_URI = process.env.MONGO_URI;
-
+    const MONGO_URI = process.env.MONGO_URI.toString();
     try {
         await mongoose.connect(MONGO_URI, {
             useNewUrlParser: true,
