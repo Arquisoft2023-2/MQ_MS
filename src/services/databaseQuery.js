@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 // Define your database model and schema
 require("../models/Flight");
 const Flight = mongoose.model('Flight');
+const {sendMessageToRabbitMQ} = require('../config/utils/producer'); 
 
 // Define your database query function
 function toRadians(degrees) {
@@ -46,6 +47,13 @@ async function executeDatabaseQuery() {
 
     // Comparar vuelos para ver si están cerca
     for (let i = 0; i < result.length; i++) {
+      if (result[i].Fuel_percentage < 30) {
+        const message = JSON.stringify({
+          flight: result[i].FK_Plate,
+          message: "Fuel is low" + result[i].FK_Plate
+        });
+        sendMessageToRabbitMQ(message);
+      }
       for (let j = i + 1; j < result.length; j++) {
         const flight1 = result[i];
         const flight2 = result[j];
@@ -53,12 +61,22 @@ async function executeDatabaseQuery() {
         const maxAltitudeDifference = 1000; // Diferencia máxima de altitud en pies
 
         if (areFlightsClose(flight1, flight2, maxDistanceKm, maxAltitudeDifference)) {
-          console.log(`Los vuelos ${flight1.FK_Plate} y ${flight2.FK_Plate} están cerca.`);
+
+          // Si los vuelos están cerca, enviar un mensaje a RabbitMQ
+          const message1 = JSON.stringify({
+            flight: flight1.FK_Plate,
+            message: "flight close to plane with plate " + flight2.FK_Plate
+          });
+          const message2 = JSON.stringify({
+            flight: flight2.FK_Plate,
+            message: "flight close to plane with plate " + flight1.FK_Plate
+          });
+          sendMessageToRabbitMQ(message1);
+          sendMessageToRabbitMQ(message2);
+
         }
       }
     }
-
-    console.log('Query result:', result);
   } catch (error) {
     console.error('Error executing query:', error);
   }
