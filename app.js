@@ -9,10 +9,10 @@ const databaseQuery = require('./src/services/databaseQuery');
 //connect to mongo atlas
 //wait until connection is established
 connectToMongo();
-//cron databaseQuery every 30 seconds
+//cron databaseQuery every minute 
 
 
-cron.schedule('*/30 * * * * *', () => {
+cron.schedule('* */1 * * * *', () => {
   databaseQuery();
 });
 

@@ -53,8 +53,8 @@ async function executeDatabaseQuery() {
 
       if (result[i].Fuel_percentage < 30) {
         const message = JSON.stringify({
-          flight: result[i].FK_Plate,
-          message: "Fuel is low" + result[i].FK_Plate
+          plate: result[i].FK_Plate,
+          message: "Fuel is low"
         });
         sendMessageToRabbitMQ(message);
       }
@@ -70,12 +70,12 @@ async function executeDatabaseQuery() {
 
           // Si los vuelos están cerca, enviar un mensaje a RabbitMQ
           const message1 = JSON.stringify({
-            flight: flight1.FK_Plate,
+            plate: flight1.FK_Plate,
             message: "flight close to plane with plate " + flight2.FK_Plate
           });
 
           const message2 = JSON.stringify({
-            flight: flight2.FK_Plate,
+            plate: flight2.FK_Plate,
             message: "flight close to plane with plate " + flight1.FK_Plate
           });
 
