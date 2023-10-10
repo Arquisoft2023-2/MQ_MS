@@ -39,12 +39,12 @@ function areFlightsClose(flight1, flight2, maxDistanceKm, maxAltitudeDifference)
 
 async function executeDatabaseQuery() {
   try {
-    const halfHourAgo = new Date(Date.now() - 30 * 60 * 1000); // Calcula la fecha y hora hace 30 minutos
+
 
     const result = await Flight.find({
-      // Buscar todos los vuelos creados en la última media hora
+      // Buscar todos los vuelos creados en los ultimos 2 minutos
       createdAt: {
-        $gte: halfHourAgo
+      $gte: new Date(new Date() - 2 * 60 * 1000)
       }
     });
 
